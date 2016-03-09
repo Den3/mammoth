@@ -1,5 +1,14 @@
 package message
 
+import (
+	"errors"
+)
+
+var (
+	// ErrConnectReturnCodeInvalid indicates Connect Return Code to be set is larger than 0x05
+	ErrConnectReturnCodeInvalid = errors.New("Connect Return Code should not larger than 0x05")
+)
+
 // ConnackMessage is that the CONNACK Packet is the packet sent by the Server in
 // response to a CONNECT Packet received from a Client. The first packet sent
 // from the Server to the Client MUST be a CONNACK Packet [MQTT-3.2.0-1]
@@ -25,6 +34,21 @@ type ConnackMessage struct {
 	// not have stored Session state, it MUST set Session Present to 0 in the CONNACK
 	// packet. This is in addition to setting a zero return code in the CONNACK packet
 	// [MQTT-3.2.2-3].
+	//
+	// The Session Present flag enables a Client to establish whether the Client and
+	// Server have a consistent view about whether there is already stored Session
+	// state.
+	//
+	// Once the initial setup of a Session is complete, a Client with stored Session
+	// state will expect the Server to maintain its stored Session state. In the
+	// event that the value of Session Present received by the Client from the Server
+	// is not as expected, the Client can choose whether to proceed with the Session
+	// or to disconnect. The Client can discard the Session state on both Client and
+	// Server by disconnecting, connecting with Clean Session set to 1 and then
+	// disconnecting again.
+	//
+	// If a Server sends a CONNACK packet containing a non-zero return code it MUST
+	// set Session Present to 0[MQTT-3.2.2-4].
 	connectAckFlags byte
 
 	// The values for the one byte unsigned Connect Return code field are listed in
@@ -77,4 +101,19 @@ func (c *ConnackMessage) SetSessionPresent(active bool) {
 // SessionPresent returns Session Present
 func (c *ConnackMessage) SessionPresent() byte {
 	return c.connectAckFlags & 0x01
+}
+
+// SetConnectReturnCode sets Connect Return Code
+func (c *ConnackMessage) SetConnectReturnCode(v byte) error {
+	if v > 0x05 {
+		return ErrConnectReturnCodeInvalid
+	}
+
+	c.connectReturnCode = v
+	return nil
+}
+
+// ConnectReturnCode returns Connect Return Code
+func (c *ConnackMessage) ConnectReturnCode() byte {
+	return c.connectReturnCode
 }
