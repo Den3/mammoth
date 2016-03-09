@@ -103,7 +103,7 @@ func (c *ConnackMessage) SessionPresent() byte {
 	return c.connectAckFlags & 0x01
 }
 
-// SetConnectReturnCode sets Connect Return Code
+// SetConnectReturnCode sets Connect Return code
 func (c *ConnackMessage) SetConnectReturnCode(v byte) error {
 	if v > 0x05 {
 		return ErrConnectReturnCodeInvalid
@@ -113,7 +113,7 @@ func (c *ConnackMessage) SetConnectReturnCode(v byte) error {
 	return nil
 }
 
-// ConnectReturnCode returns Connect Return Code
+// ConnectReturnCode returns Connect Return code
 func (c *ConnackMessage) ConnectReturnCode() byte {
 	return c.connectReturnCode
 }
