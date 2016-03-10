@@ -2,7 +2,7 @@ package message
 
 import "testing"
 
-func TestSetControlPacketType(t *testing.T) {
+func TestFixedHeaderSetControlPacketType(t *testing.T) {
 	fh := &fixedHeader{}
 	cpt := byte(0x0A)
 	fh.SetControlPacketType(cpt)
@@ -11,7 +11,7 @@ func TestSetControlPacketType(t *testing.T) {
 	}
 }
 
-func TestSetControlPacketTypeFlag(t *testing.T) {
+func TestFixedHeaderSetControlPacketTypeFlag(t *testing.T) {
 	fh := &fixedHeader{}
 	cptf := byte(0x0A)
 	fh.SetControlPacketTypeFlag(cptf)
@@ -20,7 +20,7 @@ func TestSetControlPacketTypeFlag(t *testing.T) {
 	}
 }
 
-func TestSetRemainingLength(t *testing.T) {
+func TestFixedHeaderSetRemainingLength(t *testing.T) {
 	fh := &fixedHeader{}
 	length := uint(12387)
 	err := fh.SetRemainingLength(length)

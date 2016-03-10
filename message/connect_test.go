@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestSetProtocolName(t *testing.T) {
+func TestConnectSetProtocolName(t *testing.T) {
 	c := &ConnectMessage{}
 
 	c.SetProtocolName()
@@ -18,7 +18,7 @@ func TestSetProtocolName(t *testing.T) {
 	}
 }
 
-func TestSetProtocolLevel(t *testing.T) {
+func TestConnectSetProtocolLevel(t *testing.T) {
 	c := &ConnectMessage{}
 
 	c.SetProtocolLevel()
@@ -27,7 +27,7 @@ func TestSetProtocolLevel(t *testing.T) {
 	}
 }
 
-func TestSetUserNameFlag(t *testing.T) {
+func TestConnectSetUserNameFlag(t *testing.T) {
 	c := &ConnectMessage{}
 
 	c.SetUserNameFlag(true)
@@ -41,7 +41,7 @@ func TestSetUserNameFlag(t *testing.T) {
 	}
 }
 
-func TestSetPasswordFlag(t *testing.T) {
+func TestConnectSetPasswordFlag(t *testing.T) {
 	c := &ConnectMessage{}
 
 	c.SetPasswordFlag(true)
@@ -55,7 +55,7 @@ func TestSetPasswordFlag(t *testing.T) {
 	}
 }
 
-func TestSetWillRetain(t *testing.T) {
+func TestConnectSetWillRetain(t *testing.T) {
 	c := &ConnectMessage{}
 
 	c.SetWillRetain(true)
@@ -69,7 +69,7 @@ func TestSetWillRetain(t *testing.T) {
 	}
 }
 
-func TestSetWillQoS(t *testing.T) {
+func TestConnectSetWillQoS(t *testing.T) {
 	c := &ConnectMessage{}
 
 	c.SetWillQoS(0)
@@ -98,7 +98,7 @@ func TestSetWillQoS(t *testing.T) {
 	}
 }
 
-func TestSetWillFlag(t *testing.T) {
+func TestConnectSetWillFlag(t *testing.T) {
 	c := &ConnectMessage{}
 
 	c.SetWillFlag(true)
@@ -112,7 +112,7 @@ func TestSetWillFlag(t *testing.T) {
 	}
 }
 
-func TestSetCleanSession(t *testing.T) {
+func TestConnectSetCleanSession(t *testing.T) {
 	c := &ConnectMessage{}
 
 	c.SetCleanSession(true)
@@ -126,7 +126,7 @@ func TestSetCleanSession(t *testing.T) {
 	}
 }
 
-func TestSetClientId(t *testing.T) {
+func TestConnectSetClientId(t *testing.T) {
 	c := &ConnectMessage{}
 
 	cid := []byte("")
@@ -154,7 +154,7 @@ func TestSetClientId(t *testing.T) {
 	}
 }
 
-func TestSetWillTopic(t *testing.T) {
+func TestConnectSetWillTopic(t *testing.T) {
 	c := &ConnectMessage{}
 	willTopic := []byte("a/b")
 	c.SetWillTopic(willTopic)
@@ -167,7 +167,7 @@ func TestSetWillTopic(t *testing.T) {
 	}
 }
 
-func TestSetWillMessage(t *testing.T) {
+func TestConnectSetWillMessage(t *testing.T) {
 	c := &ConnectMessage{}
 	willMessage := []byte("Hi MQTT")
 	c.SetWillMessage(willMessage)
@@ -180,7 +180,7 @@ func TestSetWillMessage(t *testing.T) {
 	}
 }
 
-func TestSetUserName(t *testing.T) {
+func TestConnectSetUserName(t *testing.T) {
 	c := &ConnectMessage{}
 	userName := []byte("mqtt")
 	c.SetUserName(userName)
@@ -193,7 +193,7 @@ func TestSetUserName(t *testing.T) {
 	}
 }
 
-func TestSetPassword(t *testing.T) {
+func TestConnectSetPassword(t *testing.T) {
 	c := &ConnectMessage{}
 	password := []byte("mqtt")
 	c.SetPassword(password)

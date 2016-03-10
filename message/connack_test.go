@@ -4,7 +4,7 @@ import (
 	"testing"
 )
 
-func TestSetSessionPresent(t *testing.T) {
+func TestConnackSetSessionPresent(t *testing.T) {
 	c := &ConnackMessage{}
 	c.SetSessionPresent(true)
 	if c.SessionPresent() != 0x01 {
@@ -12,7 +12,7 @@ func TestSetSessionPresent(t *testing.T) {
 	}
 }
 
-func TestSetConnectReturnCode(t *testing.T) {
+func TestConnackSetConnectReturnCode(t *testing.T) {
 	c := &ConnackMessage{}
 	rc := byte(0x01)
 	c.SetConnectReturnCode(rc)
