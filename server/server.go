@@ -1,9 +1,11 @@
 package server
 
 import (
+	"bytes"
+	"fmt"
+	"io"
 	"log"
 	"net"
-	"time"
 )
 
 const (
@@ -56,10 +58,24 @@ func (s *Server) getControlPacketType(t byte) string {
 
 // handleConn judges its MQTT type
 func (s *Server) handleConn(c net.Conn) {
-	switch c.(type) {
-	case *net.TCPConn:
-		log.Println("TCP connection")
+	// switch c.(type) {
+	// case *net.TCPConn:
+	// 	log.Println("TCP connection")
+	// }
+
+	log.Println("TCP connection")
+
+	buf := bytes.Buffer{}
+	io.Copy(&buf, c)
+	fmt.Println("total size:", buf.Len())
+	for i, v := range buf.Bytes() {
+		if i > 3 {
+			fmt.Printf("%s\t", string(v))
+			continue
+		}
+		fmt.Printf("%x\t", v)
 	}
+	// fmt.Printf("content:%x", buf.Bytes())
 
 }
 
@@ -78,7 +94,8 @@ func (s *Server) Listen() error {
 			log.Println("accept conn error:", err)
 			continue
 		}
-		go s.handleConn(c)
-		time.Sleep(AcceptInterval * time.Microsecond)
+		// go s.handleConn(c)
+		// time.Sleep(AcceptInterval * time.Microsecond)
+		s.handleConn(c)
 	}
 }
