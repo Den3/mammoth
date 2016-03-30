@@ -2,6 +2,12 @@ package message
 
 import (
 	"errors"
+	"io"
+)
+
+var (
+	// ErrMalformedReaminingLength indicates multiplier is larger than 128 * 128 * 128
+	ErrMalformedReaminingLength = errors.New("malformed Remaining Length")
 )
 
 const (
@@ -69,7 +75,7 @@ type fixedHeader struct {
 	// bytes in the Remaining Length field is 4
 	// _ _ _ _ _ _ _ _ ( 8 bits)
 	// ↑ indicate if there are following bytes
-	remainingLength uint32
+	remainingLength []byte
 }
 
 // SetControlPacketType sets Control Packet Type
@@ -96,6 +102,47 @@ func (fh *fixedHeader) ControlPacketTypeFlag() byte {
 }
 
 // SetRemainingLength sets Remaining Length including Variable Header and Payload
-func (fh *fixedHeader) SetRemainingLength(l uint) error {
-	return errors.New("Should implement encode to Remaining Length")
+func (fh *fixedHeader) SetRemainingLength(l int) {
+	fh.remainingLength = fh.encodeLength(l)
+}
+
+// encodeLength implements non normative comment on line 280 - 294
+func (fh *fixedHeader) encodeLength(length int) []byte {
+	encodedLength := make([]byte, 0, 4)
+	for {
+		encodedByte := byte(length % 128)
+		length /= 128
+		if length > 0 {
+			encodedByte |= 0x80
+		}
+		encodedLength = append(encodedLength, encodedByte)
+		if length <= 0 {
+			break
+		}
+	}
+	return encodedLength
+}
+
+// decodeLength implements non normative comment on line 296 - 309
+func (fh *fixedHeader) decodeLength(r io.Reader) (int, error) {
+	multiplier := uint32(0)
+	value := uint32(0)
+	encodedByte := make([]byte, 1)
+	limit := uint32(22)
+	for {
+		_, err := r.Read(encodedByte)
+		if err != nil {
+			return 0, err
+		}
+
+		value |= uint32(encodedByte[0]&0x7F) << multiplier
+		if (encodedByte[0] & 0x80) == 0 {
+			break
+		}
+		multiplier += 7
+		if multiplier > limit {
+			return 0, ErrMalformedReaminingLength
+		}
+	}
+	return int(value), nil
 }

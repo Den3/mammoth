@@ -2,6 +2,7 @@ package message
 
 import (
 	"errors"
+	"io"
 	"regexp"
 )
 
@@ -139,6 +140,7 @@ func (c *ConnectMessage) SetWillQoS(quality byte) error {
 	return nil
 }
 
+// WillQoS returns Will QoS
 func (c *ConnectMessage) WillQoS() byte {
 	return (c.connectFlags >> 3) & 0x3
 }
@@ -252,4 +254,16 @@ func (c *ConnectMessage) SetPassword(pw []byte) {
 
 	c.SetPasswordFlag(true)
 	c.password = pw
+}
+
+func (c *ConnectMessage) Read(r io.Reader) error {
+	// buf := make([]byte, 1)
+	// r.Read(buf)
+	// c.fixedHeader.SetControlPacketType(buf[0] >> 4)
+	// buf = make([]byte)
+	return nil
+}
+
+func (c *ConnackMessage) Write(w io.Writer) error {
+	return nil
 }

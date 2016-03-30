@@ -8,7 +8,25 @@ type Message interface {
 	Read(io.Reader) error
 }
 
-// NewMessageByFixedHeader returns Control Packet by Fixed Header
-func NewMessageByFixedHeader(fh *fixedHeader) Message {
+// NewMessage returns Control Packet by Fixed Header
+func NewMessage(cpt byte) Message {
+	switch cpt {
+	case CONNECT:
+	case CONNACK:
+	case PUBLISH:
+	case PUBACK:
+	case PUBREC:
+	case PUBREL:
+	case PUBCOMP:
+	case SUBSCRIBE:
+	case SUBACK:
+	case UNSUBSCRIBE:
+	case UNSUBACK:
+	case PINGREQ:
+	case PINGREP:
+	case DISCONNECT:
+	default:
+		return nil
+	}
 	return nil
 }
