@@ -75,7 +75,7 @@ type fixedHeader struct {
 	// bytes in the Remaining Length field is 4
 	// _ _ _ _ _ _ _ _ ( 8 bits)
 	// ↑ indicate if there are following bytes
-	remainingLength []byte
+	remainingLength uint32
 }
 
 // SetControlPacketType sets Control Packet Type
@@ -102,29 +102,37 @@ func (fh *fixedHeader) ControlPacketTypeFlag() byte {
 }
 
 // SetRemainingLength sets Remaining Length including Variable Header and Payload
-func (fh *fixedHeader) SetRemainingLength(l int) {
+func (fh *fixedHeader) SetRemainingLength(l uint32) {
 	fh.remainingLength = fh.encodeLength(l)
 }
 
-// encodeLength implements non normative comment on line 280 - 294
-func (fh *fixedHeader) encodeLength(length int) []byte {
-	encodedLength := make([]byte, 0, 4)
-	for {
-		encodedByte := byte(length % 128)
-		length /= 128
+// SetRemainingLength gets Remaining Length including Variable Header and Payload
+func (fh *fixedHeader) GetRemainingLength() uint32 {
+	return fh.remainingLength
+}
+
+// EncodeLength implements non normative commented on line 280 - 294
+func (fh *fixedHeader) encodeLength(length uint32) uint32 {
+	var encodedLength, encodedByte uint32
+	for length > 0 {
 		if length > 0 {
-			encodedByte |= 0x80
+			encodedLength <<= 8
 		}
-		encodedLength = append(encodedLength, encodedByte)
-		if length <= 0 {
-			break
+		encodedByte = length % 128
+		length /= 128
+
+		if length > 0 {
+			encodedByte |= 128
 		}
+
+		encodedLength |= encodedByte
 	}
+
 	return encodedLength
 }
 
-// decodeLength implements non normative comment on line 296 - 309
-func (fh *fixedHeader) decodeLength(r io.Reader) (int, error) {
+// decodeLength implements non normative commented on line 296 - 309
+func (fh *fixedHeader) decodeLength(r io.Reader) (uint32, error) {
 	multiplier := uint32(0)
 	value := uint32(0)
 	encodedByte := make([]byte, 1)
@@ -144,5 +152,5 @@ func (fh *fixedHeader) decodeLength(r io.Reader) (int, error) {
 			return 0, ErrMalformedReaminingLength
 		}
 	}
-	return int(value), nil
+	return value, nil
 }
