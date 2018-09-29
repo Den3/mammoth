@@ -208,7 +208,7 @@ func (c *ConnectMessage) SetClientId(cid []byte) error {
 
 // SetWillTopic sets Will Topic and actives Will Flag
 func (c *ConnectMessage) SetWillTopic(wt []byte) {
-	// TODO: validate wiill topic format
+	// TODO: validate will topic format
 	if len(wt) == 0 {
 		c.SetWillFlag(false)
 		return
