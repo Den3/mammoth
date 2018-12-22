@@ -20,6 +20,32 @@ func TestFixedHeaderSetControlPacketTypeFlag(t *testing.T) {
 	}
 }
 
+func TestFixedHeaderEncode(t *testing.T) {
+	testCases := []struct {
+		remainingLength uint32
+		expected        uint32
+	}{
+		{remainingLength: 0, expected: 2},
+		{remainingLength: 127, expected: 2},
+		{remainingLength: 128, expected: 3},
+		{remainingLength: 16383, expected: 3},
+		{remainingLength: 16384, expected: 4},
+		{remainingLength: 2097151, expected: 4},
+		{remainingLength: 2097152, expected: 5},
+		{remainingLength: 268435455, expected: 5},
+	}
+
+	for _, tc := range testCases {
+		fh := &fixedHeader{}
+		fh.remainingLength = tc.remainingLength
+		dest := make([]byte, 5, 5)
+		n, _ := fh.Encode(dest)
+		if uint32(n) != tc.expected {
+			t.Errorf("expected %x, got %x", tc.expected, n)
+		}
+	}
+}
+
 func TestFixedHeaderEncodeLength(t *testing.T) {
 	testCases := []struct {
 		in       uint32

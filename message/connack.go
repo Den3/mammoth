@@ -87,6 +87,14 @@ type ConnackMessage struct {
 	connectReturnCode byte
 }
 
+// NewConnackMessage returns a pointer of ConnackMessage
+func NewConnackMessage() *ConnackMessage {
+	c := &ConnackMessage{}
+	c.SetControlPacketType(CONNACK)
+
+	return c
+}
+
 // SetSessionPresent actives Session Present
 func (c *ConnackMessage) SetSessionPresent(active bool) {
 	if active {

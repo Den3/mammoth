@@ -1,13 +1,18 @@
 package message
 
 import (
+	"encoding/binary"
 	"errors"
 	"io"
+	"math"
 )
 
 var (
 	// ErrMalformedReaminingLength indicates multiplier is larger than 128 * 128 * 128
 	ErrMalformedReaminingLength = errors.New("malformed Remaining Length")
+
+	// ErrRemainingLengthInvalid indicates Remaining Length is less than 1 or larger than 268435455
+	ErrRemainingLengthInvalid = errors.New("invalid Remaining Length")
 )
 
 const (
@@ -52,11 +57,6 @@ const (
 
 	// DISCONNECT is Client is disconnecting
 	DISCONNECT
-)
-
-var (
-	// ErrRemainingLengthInvalid indicates Remaining Length is less than 1 or larger than 268435455
-	ErrRemainingLengthInvalid = errors.New("invalid Remaining Length")
 )
 
 type fixedHeader struct {
@@ -111,6 +111,16 @@ func (fh *fixedHeader) GetRemainingLength() uint32 {
 	return fh.remainingLength
 }
 
+func (fh *fixedHeader) Encode(dest []byte) (int, error) {
+	dest[0] = fh.controlPacket
+	p := 1
+
+	n := binary.PutUvarint(dest, uint64(fh.remainingLength))
+	p += n
+
+	return p, nil
+}
+
 // EncodeLength implements non normative commented on line 280 - 294
 func (fh *fixedHeader) encodeLength(length uint32) uint32 {
 	var encodedLength, encodedByte uint32
@@ -153,4 +163,9 @@ func (fh *fixedHeader) decodeLength(r io.Reader) (uint32, error) {
 		}
 	}
 	return value, nil
+}
+
+func (fh *fixedHeader) length() uint32 {
+	// TODO: avoid calculation here
+	return uint32(math.Log2(float64(fh.remainingLength)))/7 + 1 + 1
 }
