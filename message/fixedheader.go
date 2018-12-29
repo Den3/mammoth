@@ -115,7 +115,7 @@ func (fh *fixedHeader) Encode(dest []byte) (int, error) {
 	dest[0] = fh.controlPacket
 	p := 1
 
-	n := binary.PutUvarint(dest, uint64(fh.remainingLength))
+	n := binary.PutUvarint(dest[p:], uint64(fh.remainingLength))
 	p += n
 
 	return p, nil

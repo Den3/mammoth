@@ -205,3 +205,9 @@ func TestConnectSetPassword(t *testing.T) {
 		t.Error("Password Flag should be set")
 	}
 }
+
+func TestEncode(t *testing.T) {
+	c := NewConnectMessage()
+	buf := make([]byte, c.length())
+	c.Encode()
+}

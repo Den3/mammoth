@@ -2,7 +2,6 @@ package message
 
 import (
 	"errors"
-	"io"
 	"regexp"
 )
 
@@ -67,6 +66,13 @@ type ConnectMessage struct {
 	password    []byte
 }
 
+// NewConnectMessage returns pointer of ConnectMessage
+func NewConnectMessage() *ConnectMessage {
+	c := &ConnectMessage{}
+	c.SetControlPacketType(CONNECT)
+	return c
+}
+
 // SetProtocolName sets Protocol Name to "MQTT" by default
 func (c *ConnectMessage) SetProtocolName() {
 	content := "MQTT"
@@ -114,7 +120,7 @@ func (c *ConnectMessage) PasswordFlag() byte {
 	return (c.connectFlags >> 6) & 0x1
 }
 
-// SetRetainWill sets Will Retain
+// SetWillRetain sets Will Retain
 func (c *ConnectMessage) SetWillRetain(active bool) {
 	if active {
 		// 00100000
@@ -256,14 +262,20 @@ func (c *ConnectMessage) SetPassword(pw []byte) {
 	c.password = pw
 }
 
-func (c *ConnectMessage) Read(r io.Reader) error {
-	// buf := make([]byte, 1)
-	// r.Read(buf)
-	// c.fixedHeader.SetControlPacketType(buf[0] >> 4)
-	// buf = make([]byte)
-	return nil
-}
+// Encode convert the struct to bytes
+func (c *ConnectMessage) Encode(dest []byte) (int, error) {
+	p := 0
+	n, err := c.fixedHeader.Encode(dest)
+	p += n
+	if err != nil {
+		return p, errors.New("failed to encode: " + err.Error())
+	}
 
-func (c *ConnackMessage) Write(w io.Writer) error {
-	return nil
+	n = copy(dest[p:], c.protocolName)
+	p += n
+
+	dest[p] = c.protocolLevel
+	p++
+
+	return p, nil
 }

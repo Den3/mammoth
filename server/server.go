@@ -21,13 +21,19 @@ type Server struct{}
 // handleConn judges its MQTT type
 func (s *Server) handleConn(c net.Conn) {
 	m := message.NewConnackMessage()
+	buf := make([]byte, 3)
+	m.Encode(buf)
+	_, err := c.Write(buf)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
 // Listen Listen on port 1883 only
 func (s *Server) Listen() error {
 	log.Println("Server starting...")
 	ln, err := net.Listen("tcp", "0.0.0.0:"+Port)
-	log.Println("Server lisening on" + Port + "...")
+	log.Println("Server lisening on " + Port + "...")
 	if err != nil {
 		return err
 	}
